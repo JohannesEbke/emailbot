@@ -7,9 +7,11 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"time"
 
 	"github.com/JohannesEbke/go-imap-sync"
 	"github.com/howeyc/gopass"
+	flock "github.com/theckman/go-flock"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -56,7 +58,28 @@ func main() {
 			log.Fatal(err)
 		}
 		if hasSidecar {
-			log.Println(readSidecar(sidecarFilename))
+			fileLock := flock.NewFlock(email)
+			locked, err := fileLock.TryLock()
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer func() {
+				if err := fileLock.Unlock(); err != nil {
+					log.Fatal(err)
+				}
+			}()
+			if locked {
+				data, err := readSidecar(sidecarFilename)
+				time.Sleep(10000000000)
+				log.Println("sleep")
+				if err != nil {
+					log.Fatal(err)
+				}
+				log.Println(data)
+				writeSidecar(sidecarFilename, *data)
+			} else {
+				log.Fatal("File could not be Locked!")
+			}
 		}
 	}
 
@@ -79,12 +102,31 @@ func readSidecar(path string) (*SidecarFile, error) {
 	return &t, nil
 }
 
-type Step struct {
-	Name string `yaml:"name"`
+func writeSidecar(path string, data SidecarFile) error {
+	bytes, err := yaml.Marshal(data)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(path, bytes, 0600)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
+// Record of an automatic action attempt or result
+type Record struct {
+	// Time the Record was inserted
+	Time time.Time `yaml:"time"`
+	// Key of the Record
+	Key string `yaml:"key"`
+	// Output data of the Record
+	Data string `yaml:"data,omitempty"`
+}
+
+// SidecarFile represents a list of Records
 type SidecarFile struct {
-	Steps []Step `yaml:"process_steps,flow"`
+	Records []Record `yaml:"process_records"`
 }
 
 // fileExists checks if the given path exists and can be Stat'd.
