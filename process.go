@@ -61,7 +61,10 @@ func processMail(email string, processFunction func(string, SidecarData) (*Recor
 	}
 	if newRecord != nil {
 		data.Records = append(data.Records, *newRecord)
-		writeSidecar(sidecarFilename, *data)
+		err := writeSidecar(sidecarFilename, *data)
+		if err != nil {
+			return fmt.Errorf("Error writing %s: %s", sidecarFilename, err)
+		}
 	}
 	return nil
 }
@@ -88,11 +91,7 @@ func writeSidecar(path string, data SidecarData) error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(path, bytes, 0600)
-	if err != nil {
-		return err
-	}
-	return nil
+	return ioutil.WriteFile(path, bytes, 0600)
 }
 
 // Record of an automatic action attempt or result

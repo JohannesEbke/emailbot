@@ -8,7 +8,10 @@ import (
 )
 
 func main() {
-	emailbot.Main(addDownloadedRecord, printDetails)
+	err := emailbot.Main(addDownloadedRecord, printDetails)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func addDownloadedRecord(_ string, data emailbot.SidecarData) (*emailbot.Record, error) {

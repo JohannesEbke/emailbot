@@ -1,4 +1,4 @@
-[![GoDoc](https://godoc.org/github.com/JohannesEbke/emailbot?status.svg)](https://godoc.org/github.com/JohannesEbke/emailbot) [![Go Report Card](https://goreportcard.com/badge/github.com/JohannesEbke/emailbot)](https://goreportcard.com/report/github.com/JohannesEbke/emailbot)
+[![GoDoc](https://godoc.org/github.com/JohannesEbke/emailbot?status.svg)](https://godoc.org/github.com/JohannesEbke/emailbot) [![Build Status](https://travis-ci.org/JohannesEbke/emailbot.svg?branch=master)](https://travis-ci.org/JohannesEbke/emailbot) [![Go Report Card](https://goreportcard.com/badge/github.com/JohannesEbke/emailbot)](https://goreportcard.com/report/github.com/JohannesEbke/emailbot)
 
 # emailbot
 Library to develop email-based bots.
