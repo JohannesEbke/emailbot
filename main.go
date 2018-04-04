@@ -30,7 +30,7 @@ func getPassword(username, server string) (password string) {
 type ProcessFunc func(emailFile string, sidecarData SidecarData) (newRecord *Record, err error)
 
 // Process syncs mails from the given server/mailbox and processes new Emails with newEmailFunc,
-// and all synced emails with allEmailFunc.
+// and all ever synced emails with allEmailFunc.
 func Process(server, username, mailbox, emailDir string, newEmailFunc, allEmailFunc ProcessFunc) error {
 	password := getPassword(username, server)
 
@@ -47,7 +47,7 @@ func Process(server, username, mailbox, emailDir string, newEmailFunc, allEmailF
 		}
 	}
 	if allEmailFunc != nil {
-		err := processAll(emailDir, allEmailFunc)
+		err := ProcessExisting(emailDir, allEmailFunc)
 		if err != nil {
 			return err
 		}

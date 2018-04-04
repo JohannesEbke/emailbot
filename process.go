@@ -12,7 +12,8 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-func processAll(path string, processFunction func(string, SidecarData) (*Record, error)) error {
+// ProcessExisting applies the processFunction onto all existing mail in the path.
+func ProcessExisting(path string, processFunction ProcessFunc) error {
 	matches, err := filepath.Glob(fmt.Sprintf("%s/*.eml", path))
 	if err != nil {
 		return err
@@ -26,7 +27,7 @@ func processAll(path string, processFunction func(string, SidecarData) (*Record,
 	return nil
 }
 
-func processMail(email string, processFunction func(string, SidecarData) (*Record, error)) error {
+func processMail(email string, processFunction ProcessFunc) error {
 	// First, lock the email file so that only one processMail ever runs at the same time
 	fileLock := flock.NewFlock(email)
 	locked, err := fileLock.TryLock()
